@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>用户注册</title>
+    <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="./css/login.css" rel="stylesheet" type="text/css" />
+    <script src="./js/jquery-3.4.1.min.js"></script>
+    <style>
+        .btnCenter{
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body class="login">
+    <div class="content">
+        <h3 class="form-title">
+            用户注册
+        </h3>
+        <div class="form-group">
+            <label class="control-label" for="telphone">手机号</label>
+            <input class="form-control" type="text" placeholder="请输入手机号" name="telphone" id="telphone" />
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="otpCode">验证码</label>
+            <input class="form-control" type="text" placeholder="请输入验证码" name="otpCode" id="otpCode" />
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="name">姓名</label>
+            <input class="form-control" type="text" placeholder="请输入姓名" name="name" id="name" />
+        </div> <div class="form-group">
+            <label class="control-label" for="age">年龄</label>
+            <input class="form-control" type="text" placeholder="请输入年龄" name="age" id="age" />
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="gender">性别</label>
+            <input class="form-control" type="text" placeholder="性别" name="gender" id="gender" />
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="password">密码</label>
+            <input class="form-control" type="password" placeholder="请输入密码" name="password" id="password" />
+        </div>
+
+        <div class="form-action btnCenter">
+            <button class="btn blue" id="register" type="submit">
+                立即注册
+            </button>
+        </div>
+    </div>
+    <script>
+        jQuery(document).ready(function () {
+            $("#register").on("click", function () {
+                var telphone = $("#telphone").val();
+                var otpCode = $("#otpCode").val();
+                var name = $("#name").val();
+                var age = $("#age").val();
+                var gender = $("#gender").val();
+                var password = $("#password").val();
+                if (otpCode == null || otpCode == "") {
+                    alert("验证码不能为空");
+                    return false;
+                } if (telphone == null || telphone == "") {
+                    alert("手机号不能为空");
+                    return false;
+                } if (age == null || age == "") {
+                    alert("年龄不能为空");
+                    return false;
+                } if (gender == null || gender == "") {
+                    alert("性别不能为空");
+                    return false;
+                } if (password == null || password == "") {
+                    alert("密码不能为空");
+                    return false;
+                }if (name == null || name == "") {
+                    alert("姓名不能为空");
+                    return false;
+                }
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/x-www-form-urlencoded",
+                    url: "http://localhost:8080/user/register",
+                    data: {
+                        "telphone": $("#telphone").val(),
+                        "otpCode":otpCode,
+                        "name":name,
+                        "age":age,
+                        "gender":gender,
+                        "password":password,
+                    },
+                    xhrFields:{withCredentials:true},
+                    success: function (data) {
+                        if (data.status === "success") {
+                            alert("注册成功！");
+                            location.href="./login.html"
+                        } else {
+                            alert("注册失败,原因为：" + data.data.errorMsg);
+                        }
+                    },
+                    error: function (data) {
+                        alert("错误,原因是：" + data.responseText);
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <base href="<%=basePath%>">
+
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>弹窗</title>
+    <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="./css/common.css" rel="stylesheet" type="text/css"/>
+    <script src="./js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./js/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="./js/websocket.js"></script>
+    <style>
+        #imgPreview {
+            width: 40%;
+            height: 180px;
+            margin: 10px auto 0px auto;
+            border: 1px solid black;
+            text-align: center;
+        }
+
+        #prompt3 {
+            width: 100%;
+            height: 180px;
+            text-align: center;
+            position: relative;
+        }
+
+        #imgSpan {
+            position: absolute;
+            top: 60px;
+            left: 40px;
+        }
+
+        .filepath {
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+        }
+
+        #img3 {
+            height: 100%;
+            width: 100%;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+<!--
+<div class="border">
+
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1413142894&auto=1&height=66"></iframe>
+</div>
+-->
+<table class="table  table-hover" id="users">
+
+    <tr>
+        <td>用户ID</td>
+        <td>用户名</td>
+        <td>性别</td>
+        <td>手机号</td>
+        <td>账号状态</td>
+        <td>粉丝数</td>
+        <td>关注数</td>
+        <td>签名</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>杨阳</td>
+        <td>2</td>
+        <td>13123456789</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>小许</td>
+        <td>1</td>
+        <td>15123456789</td>
+        <td>1</td>
+        <td>1</td>
+        <td>0</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>狗庚</td>
+        <td>1</td>
+        <td>18123456789</td>
+        <td>1</td>
+        <td>1</td>
+        <td>2</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>8</td>
+        <td>mj</td>
+        <td>1</td>
+        <td>17123456789</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>9</td>
+        <td>admin</td>
+        <td>1</td>
+        <td>admin</td>
+        <td>1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+    </tr>
+</table>
+</body>
+<script>
+    /*    var t = ' <th>\n' +
+            '                  <td>用户ID</td>\n' +
+            '                  <td>用户名</td>\n' +
+            '                  <td>性别</td>\n' +
+            '                  <td>手机号</td>\n' +
+            '                  <td>账号状态</td>\n' +
+            '                  <td>粉丝数</td>\n' +
+            '                  <td>关注数</td>\n' +
+            '                  <td>签名</td>\n' +
+            '              </th>' +
+            '<tr><td>3</td><td>杨阳</td><td>2</td><td>13123456789</td><td>1</td><td>1</td><td>1</td><td></td></tr>' +
+            '<tr><td>4</td><td>小许</td><td>1</td><td>15123456789</td><td>1</td><td>1</td><td>0</td><td></td></tr>' +
+            '<tr><td>5</td><td>狗庚</td><td>1</td><td>18123456789</td><td>1</td><td>1</td><td>2</td><td></td></tr>' +
+            '<tr><td>8</td><td>mj</td><td>1</td><td>17123456789</td><td>1</td><td>1</td><td>1</td><td></td></tr>' +
+            '<tr><td>9</td><td>admin</td><td>1</td><td>admin</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>';
+        var usersTable = $("#users");//这是一个table表格
+        usersTable.html(t);*/
+
+</script>
+</html>

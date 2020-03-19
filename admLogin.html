@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="./css/components.min.css" rel="stylesheet" type="text/css"/>
+    <link href="./css/login.css" rel="stylesheet" type="text/css"/>
+    <link href="./css/loading.css" rel="stylesheet" type="text/css"/>
+    <script src="./js/jquery-3.4.1.min.js"></script>
+    <style>
+        body {
+            background: url("./img/background/admbg.jpg") no-repeat;
+            background-size: cover;
+        }
+        .content{
+            z-index: 100;
+            background-color: rgba(255, 255, 255, 0.24);
+        }
+        .loading{
+            z-index: 199;
+            display: none;
+        }
+        .container{
+            margin-top: 40px;
+        }
+        .fontcolor{
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Beauty</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <!--<li class="active"><a href="#" onclick="hall(this)" id="hall">广场 <span
+                            class="sr-only">(current)</span></a>
+                    </li>
+                    <li><a href="#" onclick="followed(this)" id="followed">关注</a></li>-->
+                    <li><a href="./login.html">用户登录</a></li>
+                    <!--<li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">Dropdown <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Action</a></li>
+                            <li><a href="#">Another action</a></li>
+                            <li><a href="#">Something else here</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#">Separated link</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#">One more separated link</a></li>
+                        </ul>
+                    </li>-->
+                </ul>
+                <!-- <form class="navbar-form navbar-left">
+                     <div class="form-group">
+                         <input type="text" class="form-control" placeholder="Search">
+                     </div>
+                     <button type="submit" class="btn btn-default">Submit</button>
+                 </form>-->
+                <ul class="nav navbar-nav navbar-right" id="loginStatus">
+
+                    <!--<li><a href="./login.html">登陆</a></li>
+                    <li><a href="./register.html">注册</a></li>-->
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+</header>
+
+<div class="container">
+    <div class="login">
+        <div class="content table-bordered">
+            <h3 class="form-title">
+                管理员登录
+            </h3>
+            <div class="form-group">
+                <label class="control-label fontcolor">账号</label>
+                <input class="form-control" type="text" placeholder="请输入管理员账户" name="telphone" id="telphone"/>
+            </div>
+            <div class="form-group">
+                <label class="control-label fontcolor">密码</label>
+                <input class="form-control" type="password" placeholder="请输入密码" name="password" id="password"/>
+            </div>
+            <div class="form-action">
+                <button class="btn blue" id="login" type="submit">
+                    登录
+                </button>
+            </div>
+        </div>
+        <div class="loading">
+            <div><span></span></div>
+            <div><span></span></div>
+            <div><span></span></div>
+        </div>
+    </div>
+</div>
+<script>
+    jQuery(document).ready(function () {
+        $("#login").on("click", function () {
+            var telphone = $("#telphone").val();
+            var password = $("#password").val();
+            if (telphone == null || telphone == "") {
+                alert("账户不能为空");
+                return false;
+            }
+            if (password == null || password == "") {
+                alert("密码不能为空");
+                return false;
+            }
+            $(".loading").show();
+            $(".content").css("filter","blur(5px)")
+            $.ajax({
+                type: "POST",
+                contentType: "application/x-www-form-urlencoded",
+                url: "http://localhost:8080/admUser/login",
+                data: {"telphone": telphone, "password": password,},
+                xhrFields: {withCredentials: true},
+                beforeSend: function () {
+
+                },
+                success: function (data) {
+                    if (data.status == "success") {
+                        // alert("登录成功");
+                        window.location.href = "./sysManage.html";
+                    } else {
+                        alert("登录失败,原因为：" + data.data.errorMsg);
+                    }
+                },
+                error: function (data) {
+                    alert("错误,原因是："+ data.data.errorMsg);
+                    $(".loading").hide();
+                    $(".content").css("filter","")
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+
+</html>

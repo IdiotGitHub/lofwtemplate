@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <link href="./css/bootstrap.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="./js/jquery-3.4.1.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+
+    <style>
+        body {
+            height: 100%;
+        }
+
+        nav {
+            margin: 0 !important;
+        }
+
+        table {
+            text-align: center;
+        }
+        .body {
+            margin-bottom: 0!important;
+        }
+        .leftMenu {
+            background-color: #5bc0de;
+            height: 800px;
+            padding-left: 10px;
+            border-left: 30px solid #1c6a80;
+        }
+
+        .userInfo {
+            text-align: center;
+
+        }
+
+        .userImg {
+            margin-top: 15px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+        }
+
+        .leftMenu ul {
+            margin-left: 0;
+            padding-left: 0;
+        }
+
+        .leftMenu ul li {
+            list-style: none;
+            margin-top: 10px;
+            border-bottom: 1px solid gray;
+            text-align: center;
+        }
+
+        .rightContent {
+            overflow-y: auto;
+            padding-top: 5px;
+        }
+
+        .th {
+            background-color: #dddddd;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-default navbar-fixed-top" id="nav">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Beauty后台管理</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right" id="loginStatus">
+
+            </ul>
+        </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+</header>
+<div class="body container-fluid">
+    <div class="row">
+        <!--        {{/*左部菜单栏开始*/}}-->
+        <div class="col-lg-2 col-xs-2 leftMenu">
+            <!--            {{/*左部个人信息展示*/}}-->
+            <div class="userInfo">
+                <div><img src="" class="userImg" id="userImg"/></div>
+                <div><h4 id="userName"></h4></div>
+            </div>
+            <!--            {{/*个人信息展示结束*/}}-->
+            <ul>
+                <li><a href="javascript:void (0)" onclick="main()">首页</a></li>
+                <li><a href="javascript:void (0)" onclick="users()">用户管理</a></li>
+                <li><a href="javascript:void (0)" onclick="items()">帖子管理</a></li>
+                <li><a href="javascript:void (0)" onclick="main()">用户反馈</a></li>
+
+            </ul>
+        </div>
+        <!--{{/*左部菜单栏结束*/}}
+        {{/*右部内容区开始*/}}-->
+        <div class="col-lg-10 col-xs-10 rightContent">
+            <div class="rightContent" id="users"></div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    $(function () {
+        isLogin();
+        leftMenu();
+        main();
+    });
+    window.onresize = function () {
+        leftMenu();
+    };
+
+    function leftMenu() {
+        let body = $(".body");
+        let l = $(".leftMenu");
+        body.css("margin-top", $("#nav").height());
+        let rightContent = $("#users");
+        l.height(window.innerHeight - $("#nav").height());
+        rightContent.height(window.innerHeight - $("#nav").height());
+    }
+
+    function main() {
+        let content = '<h1>欢迎登陆狗庚后台管理</h1>';
+        $("#users").html(content);
+
+    }
+
+    function users() {
+        let table = '<table class="table table-condensed table-hover table-bordered">' +
+            ' <tr class="th">' +
+            '                  <td>用户ID</td>' +
+            '                  <td>用户名</td>' +
+            '                  <td>签名</td>' +
+            '                  <td>性别</td>' +
+            '                  <td>手机号</td>' +
+            '                  <td>账号状态</td>' +
+            '                  <td>粉丝数</td>' +
+            '                  <td>关注数</td>' +
+            '                  <td>操作</td>' +
+            '              </tr>';
+        $.ajax({
+                "url": "http://localhost:8080/admUser/getUsers",
+                "type": "Post",
+                xhrFields: {withCredentials: true},
+                "data": {"limit": "10"},
+                success: function (data) {
+                    if (data.status === 'success') {
+                        let datas = data.data;
+                        let usersTable = $("#users");
+                        for (let i = 0; i < datas.length; i++) {
+                            table += '<tr><td>' + datas[i].id + '</td>' +
+                                '<td>' + datas[i].name + '</td>' +
+                                '<td>' + datas[i].sign + '</td>' +
+                                '<td>' + datas[i].gender + '</td>' +
+                                '<td>' + datas[i].telephone + '</td>' +
+                                '<td>' + datas[i].status + '</td>' +
+                                '<td>' + datas[i].fans + '</td>' +
+                                '<td>' + datas[i].follows + '</td>' +
+                                '<td>' +
+                                (datas[i].status === 1 ?
+                                    ' <a class="btn btn-danger" onclick="fengting(' + datas[i].id + ',this)">禁用</a> ' :
+                                    ' <a class="btn btn-primary" onclick="jiefeng(' + datas[i].id + ',this)">解封</a> ') +
+                                '</td></tr>';
+                        }
+                        table += '</table>';
+                        usersTable.html(table);
+                    }
+                }
+            }
+        );
+    }
+
+    function fengting(userId, feng) {
+        $.ajax({
+            "url": "http://localhost:8080/admUser/fengHao",
+            "type": "Post",
+            "data": {"userId": userId},
+            success: function (data) {
+                if (data.status === "success") {
+                    alert("该账号已被封停");
+                    users();
+                } else {
+                    alert("发生了错误");
+                }
+            }
+        });
+    }
+
+    function jiefeng(userId, jie) {
+        $.ajax({
+            "url": "http://localhost:8080/admUser/jieFeng",
+            "type": "Post",
+            xhrFields: {withCredentials: true},
+            "data": {"userId": userId},
+            success: function (data) {
+                if (data.status === "success") {
+                    alert("该账号已经解封");
+                    users();
+                } else {
+                    alert("发生了错误");
+                }
+            }
+        });
+    }
+
+    function items() {
+        let usersTable = $("#users");
+        let table = '<table class="table table-condensed table-hover table-bordered" >' +
+            ' <tr class="th">' +
+            '                  <td>帖子ID</td>' +
+            '                  <td>内容</td>' +
+            '                  <td>图片</td>' +
+            '                  <td>收藏量</td>' +
+            '                  <td>点赞量</td>' +
+            '                  <td>评论量</td>' +
+            '                  <td>用户id</td>' +
+            '                  <td>发布时间</td>' +
+            '                  <td>操作</td>' +
+            '              </tr>';
+        $.ajax({
+                "url": "http://localhost:8080/admUser/getItems",
+                "type": "Post",
+                xhrFields: {withCredentials: true},
+                "data": {},
+                success: function (data) {
+                    if (data.status === 'success') {
+                        let datas = data.data;
+                        for (let i = 0; i < datas.length; i++) {
+                            table += '<tr><td>' + datas[i].id + '</td>' +
+                                '<td>' + datas[i].context + '</td>' +
+                                '<td>' + datas[i].conImg + '</td>' +
+                                '<td>' + datas[i].favourite + '</td>' +
+                                '<td>' + datas[i].likes + '</td>' +
+                                '<td>' + datas[i].comments + '</td>' +
+                                '<td>' + datas[i].userId + '</td>' +
+                                '<td>' + datas[i].datetime + '</td>' +
+                                '<td> <a class="btn btn-danger" href="javascript:void(0)" onclick="deleteItem(' + datas[i].id + ')">删除</a></td>' +
+                                '</tr>';
+                        }
+                        table += '</table>'
+                    }
+                    usersTable.html(table);
+                }
+            }
+        );
+
+
+    }
+
+    function deleteItem(itemId) {
+        let confirmStatus = confirm("确认删除？");
+        if (confirmStatus) {
+            $.ajax({
+                "url": "http://localhost:8080/admUser/deleteItem",
+                "type": "post",
+                "data": {"itemId": itemId},
+                success: function (data) {
+                    if (data.status === 'success') {
+                        alert("删除成功");
+                        items();
+                    }
+                }
+            });
+
+        } else {
+            return;
+        }
+    }
+
+    /**
+     * 判断是否登陆
+     * */
+    function isLogin() {
+        $.ajax({
+                "url": "http://localhost:8080/admUser/isLogin",
+                "type": "Post",
+                "data": {},
+                success: function (data) {
+                    if (data.status === 'success') {
+                        loginStatus(data.data);
+                        $("#userImg").prop("src", "static" + data.data.userImg);
+                        $("#userName").text(data.data.name);
+                    } else if (data.status === 'fail') {
+                        //alert(data.status);
+                        // location.href = "./admLogin.html"
+                    }
+                }
+            }
+        );
+    }
+
+    /**
+     * 导航栏是否登陆的样式
+     * */
+    function loginStatus(user) {
+        let li = '';
+        if (user) {
+            li = ' <li class="dropdown">' +
+                '     <a href="#" id="navImgP" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> ' +
+                user.name + '<span class="caret"></span></a>' +
+                '     <ul class="dropdown-menu">' +
+                '         <li><a href="#">' + user.name + '</a></li>' +
+                '         <li><a href="./person.html?id=' + user.id + '">个人中心</a></li>' +
+                '         <li role="separator" class="divider"></li>' +
+                '         <li><a href="javascript:void(0)" onclick="logout()">退出</a></li>' +
+                '     </ul>' +
+                '</li>';
+            $("#loginStatus").html(li);
+        }
+
+    }
+</script>
+</html>

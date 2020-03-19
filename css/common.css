@@ -1,0 +1,286 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /*background-color:grey ;*/
+    background: url("../img/background/background.jpg") no-repeat;
+    background-attachment:fixed;
+    background-size: cover;
+}
+
+#body {
+    padding: 0;
+    position: relative;
+}
+
+.row {
+    margin-top: 10px;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.title {
+    text-align: center;
+    margin-top: 100px;
+}
+
+#userImg {
+    width: 200px;
+    height: 200px;
+    border-radius: 50% !important;
+}
+
+#userNameBig {
+    margin-top: 20px;
+    font-size: 30px;
+}
+
+#follow {
+    text-align: center;
+}
+
+.detail {
+    width: 600px;
+    /*border:1px #000 solid;*/
+    margin: 30px auto 0px auto;
+    text-align: center;
+    background: #fff;
+    padding: 5px;
+}
+
+.detail div {
+    border-right: 1px gray solid;
+}
+
+.detail div:last-child {
+    border: none;
+}
+
+.detail a {
+    text-decoration: none;
+}
+
+.detail div a:hover {
+    color: #ff4c0e;
+}
+
+.content {
+    width: 600px;
+    /*border:1px #000 solid;*/
+    margin: 0px auto 0px auto;
+    padding: 0 !important;
+}
+
+.footer {
+    text-align: center;
+}
+
+#pagebar {
+    text-align: center;
+}
+
+.action {
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    bottom: 5px !important;
+}
+
+.action div {
+    border-right: 1px gray solid;
+}
+
+.action div:last-child {
+    border-right: none;
+}
+
+.action a {
+    text-decoration: none;
+    color: #333;
+}
+
+.action a:hover {
+    color: #ff4c0e;
+}
+
+.userNameBar {
+    line-height: 40px;
+}
+
+.userName {
+    line-height: 20px;
+}
+
+.itemDatetime {
+    line-height: 20px;
+}
+
+.userImgBig {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.userImgSmall {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.context {
+    width: 100%;
+    min-height: 200px;
+    background: rgba(255,255,255,0.35);
+    padding: 5px;
+    margin-top: 20px;
+    position: relative;
+    clear: both;
+}
+
+.top {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    bottom: 80px;
+    right: 25px;
+    background: #fff;
+    position: fixed;
+    text-align: center;
+    vertical-align: center;
+    border-radius: 50%;
+    z-index: 999;
+}
+
+.comment {
+    display: none;
+    width: 100%;
+    bottom: 0;
+    background: rgba(255,255,255,.15);
+    margin-top: 0;
+    border-top: 1px gray solid;
+}
+
+.boss {
+    position: relative;
+}
+
+.rowComment {
+    margin-top: 15px;
+    line-height: 40px;
+}
+
+.rowComment :last-child {
+    margin-bottom: 15px;
+}
+
+.option {
+    display: none;
+    position: absolute;
+    top: 25px;
+    right: 20px;
+}
+.follows{
+    background: #fff;
+}
+.totop {
+    line-height: 30px;
+}
+
+.conImg {
+
+    margin-bottom: 35px;
+
+}
+.dropdown {
+    margin-right: 20px;
+}
+
+.sendItem {
+    width: 600px;
+    min-height: 170px;
+    /*border:1px #000 solid;*/
+    margin: 70px auto 0px auto;
+    background: rgba(255,255,255,0.35);
+    padding-top: 15px;
+    position: relative;
+}
+
+#submitImg {
+    display: none;
+}
+
+#submit {
+    float: right;
+}
+
+.submit {
+    width: 60px;
+    height: 27px;
+    border: none;
+    background: #ff4c0e;
+    color: #fff;
+}
+
+.textArea {
+    width: 100%;
+    min-height: 100px;
+    max-width: 100%;
+    margin: 0;
+    border: 1px gray solid;
+}
+
+.textArea:focus {
+    border: none;
+}
+
+.submitImg {
+    font-weight: normal;
+}
+
+.submitImg span {
+    font-size: larger;
+    color: #ff4c0e;
+    margin-right: 3px;
+}
+
+.chat {
+    position: absolute;
+    bottom: 5px;
+    left: 10px;
+    width: 200px;
+    height: 150px;
+    background: #fff;
+    position: fixed;
+}
+
+#chatBord {
+    min-height: 100px;
+}
+
+
+.preImg {
+    max-width: 40px;
+    max-height: 40px;
+    position: absolute;
+    bottom: 5px;
+    z-index: 2;
+}
+
+.divImg {
+    width: 40px;height: 40px
+}
+
+.tag {
+    display: none;
+    text-align: center;
+    background: #eab248;
+    width: 600px;
+}
+#container-fluid{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin: 0 !important;
+}

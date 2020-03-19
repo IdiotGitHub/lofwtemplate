@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>聊天室</title>
+    <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <script src="./js/jquery-3.4.1.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/websocket.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            height: 100%;
+        }
+
+        .main {
+            margin: 0 auto;
+            width: 1000px;
+            height: 100%;
+        }
+
+        .status {
+            height: 45px;
+            background-color: rgba(226, 229, 233, 0.55);
+        }
+
+        .inputDiv {
+            line-height: 45px;
+            text-align: center;
+        }
+
+        .input {
+            height: 25px;
+            width: 170px;
+            border-radius: 10px;
+            border: none;
+            padding: 0 5px;
+        }
+
+        .option {
+            text-align: center;
+            line-height: 45px;
+            font-size: 25px;
+            color: rgba(117, 119, 127, 0.55);
+        }
+
+        .option :last-child {
+            margin-left: 40px;
+        }
+
+        .active {
+            color: #1ba7f2;
+        }
+
+        .userImg {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .userImgSmall {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+        .userImgParent {
+            line-height: 45px;
+        }
+
+        .content {
+            min-height: 700px;
+        }
+
+        .list {
+            height: 100%;
+            padding: 0;
+            overflow-y: auto;
+            /*background-color: #0b4d3f;*/
+        }
+
+        .list ul li {
+            list-style: none;
+            line-height: 80px;
+            overflow: hidden;
+            padding: 15px 5px;
+        }
+
+        .list ul li:hover {
+            cursor: pointer;
+        }
+
+        .listActive {
+            background-color: #dddddd;
+        }
+
+        .userImgTd {
+            width: 20%;
+            float: left;
+            line-height: 50px;
+            padding-left: 3px;
+        }
+
+        .userNameTd {
+            width: 80%;
+            line-height: 25px;
+            float: left;
+        }
+
+        .listUserName {
+            /*width: 40%;*/
+
+        }
+
+        .datetime {
+            /*width: 40%;*/
+            color: gray;
+            font-size: 8px;
+            float: right;
+        }
+
+        .preM {
+            float: left;
+            width: 80%;
+            color: gray;
+            line-height: 25px;
+            font-size: 13px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .messageBord {
+            height: 100%;
+            /*background-color: #0c91e5;*/
+            position: relative;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        .messages {
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .messageLeft {
+            margin-left: 35px;
+            background-color: #d3f1fe;
+            padding: 10px;
+            border-radius: 5px;
+            width: auto;
+            display: inline-block;
+            /*margin-right: 70px;*/
+
+        }
+
+        .messageRight {
+            margin-right: 35px;
+            /*margin-left: 70px;*/
+            background-color: #d3f1fe;
+            padding: 10px;
+            border-radius: 5px;
+            width: auto;
+            display: inline-block;
+        }
+
+        .contextImg {
+            margin-right: 8px;
+            margin-left: 8px;
+        }
+
+        .userDivRight {
+            text-align: right;
+        }
+
+        .chatLeft {
+            padding-right: 80px;
+        }
+
+        .chatRight {
+            text-align: right;
+            padding-left: 80px;
+        }
+
+        .chatContent {
+            margin-top: 25px;
+        }
+
+        .sendBord {
+            width: 100%;
+            height: 200px;
+            position: absolute;
+            bottom: 0;
+            /*background-color: #0c203a;*/
+            border-top: 1px solid #f3f5f8;
+        }
+
+        .utils {
+            line-height: 40px;
+        }
+
+        .utils span {
+            color: rgba(117, 119, 127, 0.55);
+            margin: auto 10px;
+            font-size: 17px;
+        }
+
+        .utils:first-child {
+            margin-left: 5px;
+        }
+
+        #conImg, #conFile {
+            display: none;
+        }
+
+        .message {
+            border: none;
+            overflow-y: auto;
+
+        }
+
+        .message:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container main table-bordered">
+    <!--顶部状态栏-->
+    <div class="row status">
+        <div class="col-xs-3 inputDiv">
+            <input type="text" placeholder="Search.." class="input"/>
+        </div>
+        <div class="col-xs-8 option">
+            <span class="glyphicon glyphicon-send active" onclick="messageList()" id="messageIcon"></span>
+            <span class="glyphicon glyphicon-user" onclick="contactsList()" id="contactsIcon"></span>
+        </div>
+        <div class="col-xs-1 userImgParent">
+            <img src="img/touxiang/xuxuxu.jpeg" class="userImg" id="userImg">
+        </div>
+    </div>
+    <!--底部主要界面-->
+    <div class="row content">
+        <!--左侧消息列表-->
+        <div class="col-xs-3 list">
+            <ul id="contactsList">
+                <li class="listActive" onclick="listClick(this)">
+                    <div>
+                        <div class="userImgTd"><img src="img/touxiang/gougeng.jpeg" class="userImg" alt=""></div>
+                        <div class="userNameTd"><span class="listUserName">狗庚</span><span
+                                class="datetime">2020年1月10日</span></div>
+                        <div class="preM">
+                            2020年1月10日2020年1月10日2020年1月10日2020年1月10日2020年1月10日2020年1月10日2020年1月10日2020年1月10日2020年1月10日
+                        </div>
+                    </div>
+                </li>
+
+
+            </ul>
+        </div>
+        <!--右侧聊天界面-->
+        <div class="col-xs-9 messageBord">
+            <input type="hidden" id="recUserId">
+            <div class="messages">
+
+
+            </div>
+            <div class="sendBord">
+                <div class="utils">
+                    <label for="conFile"><span class="glyphicon glyphicon-folder-open"></span></label>
+                    <input type="file" id="conFile"/>
+                    <label for="conImg"><span class="glyphicon glyphicon-picture"></span></label>
+                    <input type="file" accept="image/*" id="conImg"/>
+                    <span class="glyphicon glyphicon-earphone"></span>
+                </div>
+                <div class="message" contenteditable="true"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+
+    $(function () {
+        //控制底部主要界面高度
+        configBord();
+        isLogin();
+        $(".message").focus(function () {
+            $(document).keypress(function (event) {
+                //判断回车键的CODE
+                if (event.keyCode === 13) {
+                    sendMessage();
+                }
+            });
+        });
+    });
+
+    function messageList() {
+        getUnreadMessage();
+
+    }
+
+    function getUnreadMessage() {
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/websocket/socket/getUnreadMessage",
+            data: {"loginUserId": user.id},
+            xhrFields: {withCredentials: true},
+            success: function (data) {
+                if (data.status === "success") {
+                    let li = '';
+                    let list = data.data;
+                    for (let i = 0; i < list.length; i++) {
+                        let className = "preM" + list[i].sendUser.id;
+
+                        li += '<li class="" onclick="listClick(this,'+ list[i].sendUser.id +')">' +
+                            '      <div>' +
+                            '           <div class="userImgTd"><img src="'+ list[i].sendUser.userImg +'" class="userImg" alt=""></div>' +
+                            '               <div class="userNameTd">' +
+                            '                   <span class="listUserName">'+ list[i].sendUser.name +'</span><span class="datetime">'+ list[i].dao.datetime +'</span></div>' +
+                            '          <div class="preM '+className+'"> '+ list[i].dao.context +' </div>' +
+                            '      </div>' +
+                            ' </li>';
+                    }
+                    $("#contactsList").html(li);
+                } else {
+                    alert("发生错误,原因为：" + data.data.errorMsg);
+                }
+            },
+            error: function (data) {
+                alert("错误,原因是：" + data.responseText);
+            }
+        });
+    }
+
+    function isLogin() {
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/user/isLogin",
+            data: {},
+            xhrFields: {withCredentials: true},
+            success: function (data) {
+                if (data.status === "success") {
+                    //这个位置需要处理一下，后端返回的永远都是success，
+                    user = data.data ? data.data : null;
+                    if (user) {
+                        $("#userImg").prop("src", user.userImg);
+                        websocket("localhost:8080", user.id);
+                        getUnreadMessage();
+                    }
+                } else {
+                    alert("发生错误,原因为：" + data.data.errorMsg);
+                }
+            },
+            error: function (data) {
+                alert("错误,原因是：" + data.responseText);
+            }
+        });
+    }
+
+    function contactsList() {
+        $("#messageIcon").removeClass("active");
+        $("#contactsIcon").addClass("active");
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/user/getFollows",
+            data: {"id": user.id},
+            xhrFields: {withCredentials: true},
+            success: function (data) {
+                if (data.status == "success") {
+
+                    loadFollows(data.data, user.id);
+                } else {
+                    alert("发生错误,原因为：" + data.data.errorMsg);
+                }
+            },
+            error: function (data) {
+                alert("错误,原因是：" + data);
+            }
+        });
+
+    }
+
+    function loadFollows(data, userId) {
+        let li = '';
+        if (data.length == 0) {
+            li = '<div class="row" style="text-align: center">您还未关注任何人，前往<a href="./shouye.html">广场</a>关注别人吧</div>';
+            $("#body").html(li);
+        }
+        for (let i = 0; i < data.length; i++) {
+            let className = "preM" + data[i].id;
+            let onlineStatus = '[离线]';
+            if (data[i].onlineStatus === 1) {
+                onlineStatus = '[在线]'
+            }
+            li += '<li class="" onclick="contactClick(this,' + data[i].id + ')">' +
+                '     <div>' +
+                '        <div class="userImgTd"><img src="' + data[i].userImg + '" class="userImg" alt=""></div>' +
+                '           <div class="userNameTd">' +
+                '               <span class="listUserName">' + data[i].name + '</span></div>' +
+                '           <div class="preM '+ className +'">' + onlineStatus + '&nbsp;&nbsp;' + data[i].sign + '</div>' +
+                '        </div>' +
+                '  </li>';
+        }
+        $("#contactsList").html(li);
+    }
+
+    function sendMessage() {
+        let userId = user.id;
+        let recUserId = $("#recUserId").val();
+        let message = $(".message").text();
+        let className = "preM" + userId;
+        if (message === '' || message === null || message === undefined) {
+            return false;
+        }
+        let conImg = $("#conImg")[0].files[0];
+        if (!conImg) {
+            conImg = null;
+        }
+        let formData = new FormData();
+        formData.append("loginUserId", userId);
+        formData.append("recUserId", recUserId);
+        formData.append("context", message);
+        formData.append("conImg", conImg);
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/websocket/socket/p2p",
+            xhrFields: {withCredentials: true},
+            data: formData,
+            contentType: false, //禁止设置请求类型
+            processData: false, //禁止jquery对DAta数据的处理,默认会处理
+            success: function (data) {
+                let message = '<div class="chatRight chatContent">' +
+                    '       <div class="userDivRight">' +
+                    '          <span class="userName">' + user.name + '</span>' +
+                    '          <span class="contextImg"><img src="' + user.userImg + '" alt="" class="userImgSmall"/></span>' +
+                    '       </div>' +
+                    '       <div class="messageRight">' + $(".message").text() + '</div>' +
+                    '  </div>';
+                $(className).text($(".message").text());
+                $(".message").text("");
+                $(".messages").append(message);
+                ($('.messages').children("div:last-child")[0]).scrollIntoView();
+                // $(".messageRight").css("max-width", $(".messageBord").width() - 100);
+            },
+            error: function (data) {
+                alert("错误,原因是：" + data.responseText);
+            }
+        });
+    }
+
+    function configBord() {
+        $(".content").css("height", window.innerHeight - 45);
+        $(".messages").css("height", $(".messageBord").height() - $(".sendBord").height());
+        $(".message").css("height", $(".sendBord").height() - $(".utils").height() - 9);
+        // $(".context").css("max-height", $(".messageBord").width() - 80);
+
+    }
+
+    function listClick(li,userId) {
+        contactClick(li, userId);
+
+    }
+
+    function contactClick(li, userId) {
+        $("#recUserId").val(userId);
+        $(li).addClass("listActive");
+        let siblings = $(li).siblings();
+        siblings.removeClass("listActive");
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/websocket/socket/getRecords",
+            data: {"loginUserId": user.id, "recUserId": userId},
+            xhrFields: {withCredentials: true},
+            success: function (data) {
+                if (data.status === "success") {
+                    let records = data.data;
+                    let sendLi = '';
+                    for (let i = 0; i < records.list.length; i++) {
+
+                        if (records.list[i].sendUserId !== user.id) {
+                            sendLi += ' <div class="chatLeft chatContent">' +
+                                '       <div><span class="contextImg"><img src="' + records.userDao.userImg + '" class="userImgSmall"/></span>' +
+                                '           <span class="userName">' + records.userDao.name + '</span>' +
+                                '       </div>' +
+                                '      <div class="messageLeft">' + records.list[i].context + '<img src="' + records.list[i].conImg + '"class=""/> </div>' +
+                                '      </div>';
+                        } else {
+                            sendLi += '<div class="chatRight chatContent">' +
+                                '       <div class="userDivRight">' +
+                                '          <span class="userName">' + user.name + '</span>' +
+                                '          <span class="contextImg"><img src="' + user.userImg + '" alt="" class="userImgSmall"/></span>' +
+                                '       </div>' +
+                                '       <div class="messageRight">' + records.list[i].context + '</div>' +
+                                '  </div>';
+                        }
+
+                    }
+                    $(".messages").html(sendLi);
+                    ($('.messages').children("div:last-child")[0]).scrollIntoView();
+
+                }
+            },
+            error: function (data) {
+                alert("错误,原因是：" + data.responseText);
+            }
+        });
+
+    }
+</script>
+</html>
