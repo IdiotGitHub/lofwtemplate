@@ -68,8 +68,9 @@
     <div class="row detail">
         <div class="col-xs-4"><a href="javascript:void(0)" id="fans" onclick="fans()">粉丝</a></div>
         <div class="col-xs-4"><a href="javascript:void(0)" id="follow" onclick="follow()">关注</a></div>
-        <!--        <div class="col-xs-4"><a href="javascript:void(0)" id="favourite" onclick="favourite()">收藏</a></div>-->
         <div class="col-xs-4"><a href="javascript:void(0)" id="item" class="s" onclick="item()">帖子</a></div>
+        <div class="col-xs-4"><a href="javascript:void(0)" id="favourite" onclick="Report()">举报</a></div>-
+
     </div>
     <div class="row content">
         <div class="col-xs-12" id="body">
@@ -93,6 +94,7 @@
 </body>
 <script>
     $(function () {
+        $("#userNameBig").attr("userId",getParameter("userId"));
         getUser(getParameter("userId"));
     });
     /**
@@ -111,6 +113,26 @@
                     $("#userNameBig").text(data.data.name);
                     $("#fans").text("粉丝("+data.data.fans+")");
                     $("#follow").text("关注("+data.data.follows+")");
+                } else {
+                    alert("发生错误,原因为：" + data.data.errorMsg);
+                }
+            },
+            error: function (data) {
+                alert("错误,原因是：" + data.responseText);
+            }
+        });
+    }
+    function Report() {
+        let userId = $("#userNameBig").attr("userId");
+        let info = "违规操作";
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/user/doReport",
+            data: {"userId": userId,"info":info},
+            xhrFields: {withCredentials: true},
+            success: function (data) {
+                if (data.status == "success") {
+                    alert(data.data);
                 } else {
                     alert("发生错误,原因为：" + data.data.errorMsg);
                 }
