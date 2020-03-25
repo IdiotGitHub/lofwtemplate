@@ -8,6 +8,8 @@
     <link href="./css/login.css" rel="stylesheet" type="text/css"/>
     <script src="./js/jquery-3.4.1.min.js"></script>
     <script src="./js/utils.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+
     <style>
         .follows {
             background: #fff;
@@ -54,6 +56,7 @@
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
+
     </nav>
 </header>
 <div class="container-fluid">
@@ -66,10 +69,10 @@
         </div>
     </div>
     <div class="row detail">
-        <div class="col-xs-4"><a href="javascript:void(0)" id="fans" onclick="fans()">粉丝</a></div>
-        <div class="col-xs-4"><a href="javascript:void(0)" id="follow" onclick="follow()">关注</a></div>
-        <div class="col-xs-4"><a href="javascript:void(0)" id="item" class="s" onclick="item()">帖子</a></div>
-        <div class="col-xs-4"><a href="javascript:void(0)" id="favourite" onclick="Report()">举报</a></div>-
+        <div class="col-xs-3"><a href="javascript:void(0)" id="fans" onclick="fans()">粉丝</a></div>
+        <div class="col-xs-3"><a href="javascript:void(0)" id="follow" onclick="follow()">关注</a></div>
+        <div class="col-xs-3"><a href="javascript:void(0)" id="item" class="s" onclick="item()">帖子</a></div>
+        <div class="col-xs-3"><a href="javascript:void(0)" id="favourite" onclick="ShowCreateModal()">举报</a></div>-
 
     </div>
     <div class="row content">
@@ -91,13 +94,42 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="reportDivModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportDivTitle">举报信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <input type="text" autofocus class="form-control" id="reportInfo">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="reportInfoSubmit">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 <script>
     $(function () {
         $("#userNameBig").attr("userId",getParameter("userId"));
         getUser(getParameter("userId"));
     });
+
+    function ShowCreateModal(){
+        $("#reportDivTitle").text("举报信息");
+        $('#reportDivModal').modal('show');
+    }
+
     /**
+     *
      * 获取用户信息
      * */
     function getUser(userId) {
@@ -122,17 +154,45 @@
             }
         });
     }
-    function Report() {
+    $("#reportInfoSubmit").click(function (){
+        let reportInfo = $("#reportInfo").val();
         let userId = $("#userNameBig").attr("userId");
-        let info = "违规操作";
         $.ajax({
             type: "POST",
             url: "http://localhost:8080/user/doReport",
-            data: {"userId": userId,"info":info},
+            data: {"userId": userId,"info":reportInfo,"status":"1"},
             xhrFields: {withCredentials: true},
             success: function (data) {
                 if (data.status == "success") {
                     alert(data.data);
+                    $("#reportDivModal").modal("hide");
+                } else {
+                    alert("发生错误,原因为：" + data.data.errorMsg);
+                }
+            },
+            error: function (data) {
+                alert("错误,原因是：" + data.responseText);
+            }
+        });
+    });
+
+
+
+    function fans() {
+        $("#fans").prop("class", "selected");
+        $("#follow").prop("class", "");
+        $("#item").prop("class", "");
+        $("#favourite").prop("class", "");
+        let userId = $("#userNameBig").attr("userId");
+
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/user/getFans",
+            data: {"id": userId},
+            xhrFields: {withCredentials: true},
+            success: function (data) {
+                if (data.status == "success") {
+                    loadFans(data.data, userId);
                 } else {
                     alert("发生错误,原因为：" + data.data.errorMsg);
                 }
@@ -142,5 +202,195 @@
             }
         });
     }
+
+    function loadFans(data, userId) {
+        var div = '';
+        if (data.length == 0) {
+            div = '<div class="row" style="text-align: center">还没有人关注他</div>';
+            $("#body").html(div);
+            $("#page").hide();
+        }
+        for (var i = 0; i < data.length; i++) {
+            var foSpan = '关注';
+            if (data[i].followed) {
+                foSpan = '互相关注';
+            }
+            div += '<div class="row follows">' +
+                '<div class="col-xs-1 userNameBar"><img src="' + data[i].userImg + '" class="userImgSmall"/> </div>' +
+                '<div class="col-xs-9 userNameBar"><div>' + data[i].name + ':<br/> </div></div>' +
+                '<div class="col-xs-2 userNameBar"><a href="javascript:void(0)" class="' + data[i].id + '" >' + foSpan + '</a></div> ' +
+                '</div>';
+        }
+        div = '<div class="followBox">' + div + '</div>';
+        $("#body").html(div)
+        $("#page").hide()
+    }
+
+    function follow() {
+        $("#fans").prop("class", "");
+        $("#follow").prop("class", "selected");
+        $("#item").prop("class", "");
+        $("#favourite").prop("class", "");
+        let userId = $("#userNameBig").attr("userId");
+
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/user/getFollows",
+            data: {"id": userId},
+            xhrFields: {withCredentials: true},
+            success: function (data) {
+                if (data.status == "success") {
+                    loadFollows(data.data, userId);
+                } else {
+                    alert("发生错误,原因为：" + data.data.errorMsg);
+                }
+            },
+            error: function (data) {
+                alert("错误,原因是：" + data.responseText);
+            }
+        });
+    }
+
+    function loadFollows(data, userId) {
+        var div = '';
+        if (data.length == 0) {
+            div = '<div class="row" style="text-align: center">他还未关注任何人</div>';
+            $("#body").html(div);
+            $("#page").hide();
+        }
+        for (var i = 0; i < data.length; i++) {
+            var foSpan = '已关注';
+            if (data[i].isFollowed) {
+                foSpan = '互相关注';
+            }
+            div += '<div class="row follows">' +
+                '<div class="col-xs-1 userNameBar"><img src="' + data[i].userImg + '" class="userImgSmall"/> </div>' +
+                '<div class="col-xs-9 userNameBar"><div>' + data[i].name + ':<br/> </div></div>' +
+                '<div class="col-xs-2 userNameBar"><a href="javascript:void(0)" >' + foSpan + '</a></div> ' +
+                '</div>';
+        }
+        div = '<div class="followBox">' + div + '</div>';
+        $("#body").html(div)
+        $("#page").hide()
+    }
+    function item() {
+        let userId = $("#userNameBig").attr("userId");
+
+        load(null, 1, 5, userId)
+
+    }
+    function load(search, currentPage, pageSize, userId) {
+        $("#fans").prop("class", "");
+        $("#follow").prop("class", "");
+        $("#favourite").prop("class", "");
+        $("#item").prop("class", "selected");
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/item/getUserItems",
+            data: {"search": search, "currentPage": currentPage, "pageSize": pageSize, "userId": userId},
+            xhrFields: {withCredentials: true},
+            success: function (data) {
+                if (data.status == "success") {
+                    var pageBean = data.data;
+                    var info = pageBean.list;
+                    if (!loadBody(info, userId)) {
+                        return false;
+                    }
+                    loadPage(search, pageBean, pageSize,userId);
+
+                } else {
+                    alert("发生错误,原因为：" + data.data.errorMsg);
+                }
+            },
+            error: function (data) {
+                alert("错误,原因是：" + data.responseText);
+            }
+        });
+    }
+
+    function loadBody(data, userId) {
+        var div = '';
+        for (var i = 0; i < data.length; i++) {
+            var likeSpan = '';
+            var faSpan = '';
+            var options = '<a href="javascript:void(0)" class="option option' + data[i].id + '" onclick="deleteItem()">删除</a>';
+            //判断是否点赞
+            if (data[i].isLike) {
+                likeSpan = '<span class="glyphicon glyphicon-heart"></span>';
+            } else {
+                likeSpan = '<span class="glyphicon glyphicon-heart-empty"></span>';
+            }
+            //判断是否收藏
+            if (data[i].isFavourite) {
+                faSpan = '<span class="glyphicon glyphicon-star"></span>';
+            } else {
+                faSpan = '<span class="glyphicon glyphicon-star-empty"></span>';
+            }
+            var id = 0;
+
+            div += '<div class="boss">' +
+                '<div class="context">' +
+                '   <div class="row">' +
+                '     <div class="col-xs-1"><img src="' + data[i].userImg + '" class="userImgBig"/></div>' +
+                '       <div class="col-xs-9 userNameBar"><div class="userName">' + data[i].userName + ':<br/><span class="itemDatetime">' + data[i].datetime + '</span> </div> </div>' +
+                '       <div class="col-xs-2 userNameBar"  id="follow"><span class="glyphicon glyphicon-chevron-down" id="optionIcon" onclick="option(this,' + data[i].id + ')"></span>' + options +
+                '       </div>' +
+                '   </div>' +
+                '   <div class="row">' +
+                '       <div class="col-xs-1" ></div>' +
+                '       <div class="col-xs-10"><p> ' + data[i].context + '</p>' +
+                '           <img src="' + data[i].conImg + '"  class="img-responsive conImg"/>' +
+                '       </div>' +
+                '       <div class="col-xs-1"></div>' +
+                '   </div>' +
+                '   <div class="row action">' +
+                '      <div class="col-xs-4">' +
+                '          <a href="javascript:void(0)"  >收藏' + faSpan + '</a>' +
+                '          <span>' + data[i].favourites + '</span>' +
+                '      </div>' +
+                '      <div class="col-xs-4">' +
+                '         <a href="javascript:void(0)"  >点赞' + likeSpan + '</a>' +
+                '         <span>' + data[i].likes + '</span>' +
+                '      </div>' +
+                '      <div class="col-xs-4"><a href="javascript:void(0)" onclick="comment(' + data[i].id + ',' + id + ')">评论' +
+                '         <label id="commentNum"><span class="glyphicon glyphicon-edit"></span> ' + data[i].comments + '</label></a>' +
+                '      </div>' +
+                '   </div>';
+            var divComment = loadComment(data[i].commentModels, data[i].id, "", "");
+            div += '</div>' + divComment + '</div>';
+        }
+        $("#body").html(div);
+        return true;
+    }
+    /**
+     * 加载评论内容
+     * @param comments
+     * @param itemId
+     * @returns {string}
+     */
+    function loadComment(comments, itemId, userId, userImg) {
+
+        var id = 'comment' + itemId;
+        var div = '<div class="comment ' + id + '">';
+        div += '<div class="row ">' +
+            '<dic class="col-xs-1"></dic>' +
+            '<div class="col-xs-10">';
+        for (var i = 0; i < comments.length; i++) {
+            div += '<div class="rowComment"><div class="col-xs-1"><img src="' + comments[i].userImg + '"class="userImgSmall" /></div>' +
+                '<div class="col-xs-11"> ' +
+                ' <div class="userName">' + comments[i].userName + ':<br/>' +
+                '<span class="itemDatetime">' + comments[0].datetime + '</span></div>' + comments[i].context + '' +
+                '</div></div>';
+        }
+        div += '</div></div></div>';
+        return div;
+
+    }
+
+    function option(element, itemId) {
+        $('.option' + itemId).slideToggle("normal", "swing");
+        // $(element).prop("class","glyphicon glyphicon-chevron-up")
+    }
+
 </script>
 </html>

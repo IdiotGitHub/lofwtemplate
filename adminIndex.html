@@ -86,7 +86,7 @@
                 <a class="navbar-brand" href="#">Beauty后台管理</a>
             </div>
             <ul class="nav navbar-nav navbar-right" id="loginStatus">
-
+                <li><a href="./admLogin.html">退出</a></li>
             </ul>
         </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
@@ -106,7 +106,7 @@
                 <li><a href="javascript:void (0)" onclick="main()">首页</a></li>
                 <li><a href="javascript:void (0)" onclick="users()">用户管理</a></li>
                 <li><a href="javascript:void (0)" onclick="items()">帖子管理</a></li>
-                <li><a href="javascript:void (0)" onclick="getErrorsLog()">用户反馈</a></li>
+                <li><a href="javascript:void (0)" onclick="getReportInfo()">用户反馈</a></li>
                 <li><a href="javascript:void (0)" onclick="getErrorsLog()">运行日志</a></li>
                 <li><a href="javascript:void (0)" onclick="getServiceLog()">用户轨迹</a></li>
 
@@ -185,6 +185,8 @@
                         }
                         table += '</table>';
                         usersTable.html(table);
+                    }else {
+                        alert(data.data.errorMsg);
                     }
                 }
             }
@@ -259,6 +261,9 @@
                         }
                         table += '</table>';
                         usersTable.html(table);
+                    }else {
+                        alert(data.data.errorMsg);
+
                     }
                 }
             }
@@ -290,12 +295,52 @@
                         }
                         table += '</table>';
                         usersTable.html(table);
+                    }else {
+                        alert(data.data.errorMsg);
                     }
                 }
             }
         );
     }
 
+    function getReportInfo() {
+        let table = '<table class="table table-condensed table-hover table-bordered">' +
+            ' <tr class="th">' +
+            '                  <td>ID</td>' +
+            '                  <td>用户ID</td>' +
+            '                  <td>举报信息</td>' +
+            '                  <td>举报时间</td>' +
+            '                  <td>操作</td>' +
+            '              </tr>';
+        $.ajax({
+                "url": "http://localhost:8080/admUser/getReportList",
+                "type": "Post",
+                xhrFields: {withCredentials: true},
+                "data": {"limit": "10"},
+                success: function (data) {
+                    if (data.status === 'success') {
+                        let datas = data.data;
+                        let usersTable = $("#users");
+                        for (let i = 0; i < datas.length; i++) {
+                            table += '<tr><td>' + datas[i].id + '</td>' +
+                                '<td>' + datas[i].user_id + '</td>' +
+                                '<td>' + datas[i].info + '</td>' +
+                                '<td>' + datas[i].create_time + '</td>' +
+                                '<td>' +
+                                (datas[i].status === 1 ?
+                                    ' <a class="btn btn-danger" onclick="fengting(' + datas[i].user_id + ',this)">禁用</a> ' :
+                                    ' <a class="btn btn-primary" onclick="jiefeng(' + datas[i].user_id + ',this)">解封</a> ') +
+                                '</td></tr>';
+                        }
+                        table += '</table>';
+                        usersTable.html(table);
+                    }else {
+                        alert(data.data.errorMsg);
+                    }
+                }
+            }
+        );
+    }
     function items() {
         let usersTable = $("#users");
         let table = '<table class="table table-condensed table-hover table-bordered" >' +
@@ -331,8 +376,10 @@
                                 '</tr>';
                         }
                         table += '</table>'
+                        usersTable.html(table);
+                    }else {
+                        alert(data.data.errorMsg);
                     }
-                    usersTable.html(table);
                 }
             }
         );
@@ -351,6 +398,8 @@
                     if (data.status === 'success') {
                         alert("删除成功");
                         items();
+                    }else {
+                        alert(data.data.errorMsg);
                     }
                 }
             });
@@ -376,6 +425,8 @@
                     } else if (data.status === 'fail') {
                         //alert(data.status);
                         // location.href = "./admLogin.html"
+                    }else {
+                        alert(data.data.errorMsg);
                     }
                 }
             }
