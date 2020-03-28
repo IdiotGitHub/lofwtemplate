@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <title>首页</title>
     <link href="./css/bootstrap.css" rel="stylesheet" type="text/css"/>
+
     <script type="text/javascript" src="./js/jquery-3.4.1.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
 
     <style>
         body {
             height: 100%;
+            background: url("./img/background/admbg.jpg") no-repeat;
+            background-size: cover;
         }
 
         nav {
@@ -18,20 +21,20 @@
 
         table {
             text-align: center;
+            background-color: #ffffffa8;
         }
         .body {
             margin-bottom: 0!important;
         }
         .leftMenu {
-            background-color: #5bc0de;
+            background-color: #c4c2c5;
             height: 800px;
             padding-left: 10px;
-            border-left: 30px solid #1c6a80;
+            border-left: 30px solid rgba(0, 0, 0, 0.23);
         }
 
         .userInfo {
             text-align: center;
-
         }
 
         .userImg {
@@ -62,6 +65,9 @@
             background-color: #dddddd;
             font-weight: bold;
         }
+        h1{
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -80,7 +86,7 @@
                 <a class="navbar-brand" href="#">Beauty后台管理</a>
             </div>
             <ul class="nav navbar-nav navbar-right" id="loginStatus">
-
+                <li><a href="./admLogin.html">退出</a></li>
             </ul>
         </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
@@ -92,7 +98,7 @@
         <div class="col-lg-2 col-xs-2 leftMenu">
             <!--            {{/*左部个人信息展示*/}}-->
             <div class="userInfo">
-                <div><img src="" class="userImg" id="userImg"/></div>
+                <div><img src="./img/touxiang/admtx.jpg" class="userImg" id="userImg"/></div>
                 <div><h4 id="userName"></h4></div>
             </div>
             <!--            {{/*个人信息展示结束*/}}-->
@@ -100,7 +106,10 @@
                 <li><a href="javascript:void (0)" onclick="main()">首页</a></li>
                 <li><a href="javascript:void (0)" onclick="users()">用户管理</a></li>
                 <li><a href="javascript:void (0)" onclick="items()">帖子管理</a></li>
-                <li><a href="javascript:void (0)" onclick="main()">用户反馈</a></li>
+                <li><a href="javascript:void (0)" onclick="getReportInfo()">用户反馈</a></li>
+                <li><a href="javascript:void (0)" onclick="getErrorsLog()">运行日志</a></li>
+                <li><a href="javascript:void (0)" onclick="getServiceLog()">用户轨迹</a></li>
+
 
             </ul>
         </div>
@@ -132,7 +141,7 @@
     }
 
     function main() {
-        let content = '<h1>欢迎登陆狗庚后台管理</h1>';
+        let content = '<h1>欢迎登陆后台管理</h1>';
         $("#users").html(content);
 
     }
@@ -176,6 +185,8 @@
                         }
                         table += '</table>';
                         usersTable.html(table);
+                    }else {
+                        alert(data.data.errorMsg);
                     }
                 }
             }
@@ -215,6 +226,121 @@
         });
     }
 
+
+    function getServiceLog() {
+        let table = '<table class="table table-condensed table-hover table-bordered">' +
+            ' <tr class="th">' +
+            '                  <td>ID</td>' +
+            '                  <td>用户ID</td>' +
+            '                  <td>用户号码</td>' +
+            '                  <td>服务地址</td>' +
+            '                  <td>服务名称</td>' +
+            '                  <td>访问内容</td>' +
+            '                  <td>访问结果</td>' +
+            '                  <td>时间</td>' +
+            '              </tr>';
+        $.ajax({
+                "url": "http://localhost:8080/admUser/getServiceLog",
+                "type": "Post",
+                xhrFields: {withCredentials: true},
+                "data": {"limit": "10"},
+                success: function (data) {
+                    if (data.status === 'success') {
+                        let datas = data.data;
+                        let usersTable = $("#users");
+                        for (let i = 0; i < datas.length; i++) {
+                            table += '<tr><td>' + datas[i].id + '</td>' +
+                                '<td>' + datas[i].user_id + '</td>' +
+                                '<td>' + datas[i].user_telephone + '</td>' +
+                                '<td>' + datas[i].service_url + '</td>' +
+                                '<td>' + datas[i].service_name + '</td>' +
+                                '<td>' + datas[i].req_info + '</td>' +
+                                '<td>' + datas[i].result_desc + '</td>' +
+                                '<td>' + datas[i].create_time + '</td>' +
+                                 '</tr>';
+                        }
+                        table += '</table>';
+                        usersTable.html(table);
+                    }else {
+                        alert(data.data.errorMsg);
+
+                    }
+                }
+            }
+        );
+    }
+
+
+    function getErrorsLog() {
+        let table = '<table class="table table-condensed table-hover table-bordered">' +
+            ' <tr class="th">' +
+            '                  <td>ID</td>' +
+            '                  <td>异常内容</td>' +
+            '                  <td>时间</td>' +
+            '              </tr>';
+        $.ajax({
+                "url": "http://localhost:8080/admUser/getErrorsLog",
+                "type": "Post",
+                xhrFields: {withCredentials: true},
+                "data": {"limit": "10"},
+                success: function (data) {
+                    if (data.status === 'success') {
+                        let datas = data.data;
+                        let usersTable = $("#users");
+                        for (let i = 0; i < datas.length; i++) {
+                            table += '<tr><td>' + datas[i].id + '</td>' +
+                                '<td>' + datas[i].errors_info + '</td>' +
+                                '<td>' + datas[i].create_time + '</td>' +
+                                '</tr>';
+                        }
+                        table += '</table>';
+                        usersTable.html(table);
+                    }else {
+                        alert(data.data.errorMsg);
+                    }
+                }
+            }
+        );
+    }
+
+    function getReportInfo() {
+        let table = '<table class="table table-condensed table-hover table-bordered">' +
+            ' <tr class="th">' +
+            '                  <td>ID</td>' +
+            '                  <td>用户ID</td>' +
+            '                  <td>举报信息</td>' +
+            '                  <td>举报时间</td>' +
+            '                  <td>操作</td>' +
+            '              </tr>';
+        $.ajax({
+                "url": "http://localhost:8080/admUser/getReportList",
+                "type": "Post",
+                xhrFields: {withCredentials: true},
+                "data": {"limit": "10"},
+                success: function (data) {
+                    if (data.status === 'success') {
+                        let datas = data.data;
+                        let usersTable = $("#users");
+                        for (let i = 0; i < datas.length; i++) {
+                            table += '<tr><td>' + datas[i].id + '</td>' +
+                                '<td>' + datas[i].user_id + '</td>' +
+                                '<td>' + datas[i].info + '</td>' +
+                                '<td>' + datas[i].create_time + '</td>' +
+                                '<td>' +
+                                (datas[i].status === 1 ?
+                                    ' <a class="btn btn-danger" onclick="fengting(' + datas[i].user_id + ',this)">禁用</a> ' :
+                                    ' <a class="btn btn-primary" onclick="jiefeng(' + datas[i].user_id + ',this)">解封</a> ') +
+                                '</td></tr>';
+                        }
+                        table += '</table>';
+                        usersTable.html(table);
+                    }else {
+                        alert(data.data.errorMsg);
+                    }
+                }
+            }
+        );
+    }
     function items() {
         let usersTable = $("#users");
         let table = '<table class="table table-condensed table-hover table-bordered" >' +
@@ -250,8 +376,10 @@
                                 '</tr>';
                         }
                         table += '</table>'
+                        usersTable.html(table);
+                    }else {
+                        alert(data.data.errorMsg);
                     }
-                    usersTable.html(table);
                 }
             }
         );
@@ -270,6 +398,8 @@
                     if (data.status === 'success') {
                         alert("删除成功");
                         items();
+                    }else {
+                        alert(data.data.errorMsg);
                     }
                 }
             });
@@ -295,6 +425,8 @@
                     } else if (data.status === 'fail') {
                         //alert(data.status);
                         // location.href = "./admLogin.html"
+                    }else {
+                        alert(data.data.errorMsg);
                     }
                 }
             }

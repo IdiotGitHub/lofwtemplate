@@ -25,24 +25,32 @@
         </div>
         <div class="form-group">
             <label class="control-label" for="otpCode">验证码</label>
-            <input class="form-control" type="text" placeholder="请输入验证码" name="otpCode" id="otpCode" />
+            <input class="form-control" type="text" placeholder="请输入验证码" name="otpCode" id="otpCode"  disabled="disabled"/>
         </div>
         <div class="form-group">
             <label class="control-label" for="name">姓名</label>
             <input class="form-control" type="text" placeholder="请输入姓名" name="name" id="name" />
-        </div> <div class="form-group">
+        </div>
+        <div class="form-group">
             <label class="control-label" for="age">年龄</label>
             <input class="form-control" type="text" placeholder="请输入年龄" name="age" id="age" />
         </div>
+
         <div class="form-group">
-            <label class="control-label" for="gender">性别</label>
-            <input class="form-control" type="text" placeholder="性别" name="gender" id="gender" />
+            <label class="control-label" for="sex">性别</label>
+            <select class="form-control" id="sex">
+                <option value="1">先生</option>
+                <option value="2">女士</option>
+            </select>
         </div>
         <div class="form-group">
             <label class="control-label" for="password">密码</label>
             <input class="form-control" type="password" placeholder="请输入密码" name="password" id="password" />
         </div>
-
+        <div class="form-group">
+            <label class="control-label" for="password">确认密码</label>
+            <input class="form-control" type="password" placeholder="请输入密码" name="password" id="password2" />
+        </div>
         <div class="form-action btnCenter">
             <button class="btn blue" id="register" type="submit">
                 立即注册
@@ -53,27 +61,42 @@
         jQuery(document).ready(function () {
             $("#register").on("click", function () {
                 var telphone = $("#telphone").val();
-                var otpCode = $("#otpCode").val();
+                //var otpCode = $("#otpCode").val();
                 var name = $("#name").val();
                 var age = $("#age").val();
-                var gender = $("#gender").val();
+                var gender = $("#sex").val();
                 var password = $("#password").val();
-                if (otpCode == null || otpCode == "") {
+                var password2 = $("#password2").val();
+
+                /*if (otpCode == null || otpCode == "") {
                     alert("验证码不能为空");
                     return false;
-                } if (telphone == null || telphone == "") {
+                }*/
+                if (telphone == null || telphone == "") {
                     alert("手机号不能为空");
                     return false;
-                } if (age == null || age == "") {
+                }
+                if (age == null || age == "") {
                     alert("年龄不能为空");
                     return false;
-                } if (gender == null || gender == "") {
+                }
+                if (gender == null || gender == "") {
                     alert("性别不能为空");
                     return false;
-                } if (password == null || password == "") {
+                }
+                if (password == null || password == "") {
                     alert("密码不能为空");
                     return false;
-                }if (name == null || name == "") {
+                }
+                if (password2 == null || password2 == "") {
+                    alert("请确认密码");
+                    return false;
+                }
+                if (password2 != password) {
+                    alert("两次输入的密码不一致");
+                    return false;
+                }
+                if (name == null || name == "") {
                     alert("姓名不能为空");
                     return false;
                 }
