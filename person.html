@@ -15,9 +15,12 @@
         }
 
         .selected {
-            color: #ff4c0e ;
+            color: #ff4c0e;
         }
 
+        .top {
+            display: none;
+        }
     </style>
 </head>
 
@@ -70,7 +73,7 @@
     <div class="row detail">
         <div class="col-xs-3"><a href="javascript:void(0)" id="fans" onclick="fans()">粉丝</a></div>
         <div class="col-xs-3"><a href="javascript:void(0)" id="follow" onclick="follow()">关注</a></div>
-       <div class="col-xs-3"><a href="javascript:void(0)" id="favourite" onclick="favouriteitem()">收藏</a></div>
+        <div class="col-xs-3"><a href="javascript:void(0)" id="favourite" onclick="favouriteitem()">收藏</a></div>
         <div class="col-xs-3"><a href="javascript:void(0)" id="item" class="selected" onclick="item()">帖子</a></div>
     </div>
     <div class="row content">
@@ -83,7 +86,8 @@
             </nav>
         </div>
     </div>
-    <div class="top"><a href="#userImg"><span class="glyphicon glyphicon-arrow-up totop"></span></a></div>
+    <div class="top"><a href="javascript:void(0)" id="goTop" onclick="goTop()"><span
+            class="glyphicon glyphicon-arrow-up totop"></span></a></div>
     <div class="row footer">
         <div class="col-xs-12">
             <div class="row">
@@ -98,7 +102,7 @@
         };
         $(function () {
             user = null;
-            var userId = getParameter("id");
+            var userId = getParameter("userId");
             if (!userId) {
                 alert("你还未登陆，请先登录");
                 location.href = "./login.html";
@@ -113,10 +117,12 @@
             load(null, 1, 5, user.id)
 
         }
+
         function favouriteitem() {
             loadFavourite(null, 1, 5, user.id)
 
         }
+
         function fans() {
             $("#fans").prop("class", "selected");
             $("#follow").prop("class", "");
@@ -140,6 +146,7 @@
                 }
             });
         }
+
         /*function favourite() {
             $("#fans").prop("class", "selected");
             $("#follow").prop("class", "");
@@ -202,8 +209,8 @@
                         $("#telephone").text(data.data.telephone);
                         $("#userNameBig").text(data.data.name);
                         $("#navUserName").text(data.data.name);
-                        $("#fans").text("粉丝("+data.data.fans+")");
-                        $("#follow").text("关注("+data.data.follows+")");
+                        $("#fans").text("粉丝(" + data.data.fans + ")");
+                        $("#follow").text("关注(" + data.data.follows + ")");
                     } else {
                         //此处做一下处理，如果用户未登陆给出提示并跳转到登陆页面
                         alert("发生错误,原因为：" + data.data.errorMsg);
@@ -328,7 +335,7 @@
                         if (!loadBody(info, userId)) {
                             return false;
                         }
-                        loadPage(search, pageBean, pageSize,userId);
+                        loadPage(search, pageBean, pageSize, userId);
 
                     } else {
                         alert("发生错误,原因为：" + data.data.errorMsg);
@@ -339,6 +346,7 @@
                 }
             });
         }
+
         /**
          * 加载页面
          * search:搜索内容
@@ -364,7 +372,7 @@
                         if (!loadBody(info, userId)) {
                             return false;
                         }
-                        loadPage(search, pageBean, pageSize,userId);
+                        loadPage(search, pageBean, pageSize, userId);
 
                     } else {
                         alert("发生错误,原因为：" + data.data.errorMsg);
@@ -375,6 +383,7 @@
                 }
             });
         }
+
         /**
          * 加载主页内容
          * @param data

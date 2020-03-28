@@ -149,6 +149,16 @@
             return false;
         });
     });
+    /**
+     * 点击导航栏广场
+     * */
+    function hall() {
+        $("#hall").parent().attr("class", "active");
+        $("#hall").html('广场<span class="sr-only">(current)</span>');
+        $("#followed").parent().removeAttr("class");
+        $("#followed").html("关注");
+        location.href = "./shouye.html"
+    }
 </script>
 </body>
 

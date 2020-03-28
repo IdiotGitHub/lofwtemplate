@@ -11,6 +11,7 @@ function pageSize() {
         $(".tag").css("width", "600px");
     }
 }
+
 /**
  * 点击导航栏广场
  * */
@@ -21,6 +22,7 @@ function hall() {
     $("#followed").html("关注");
     location.href = "./shouye.html"
 }
+
 /**
  * 关注动作
  * */
@@ -47,7 +49,6 @@ function checkFollowedStatus(element, itemUserId, userId) {
         }
     });
 }
-
 
 
 /**
@@ -119,6 +120,7 @@ function comment(itemId) {
     var itemId = '.comment' + itemId;
     $(itemId).slideToggle("normal", "swing");
 }
+
 /**
  * 退出登录
  * */
@@ -146,7 +148,7 @@ function logout() {
 /**
  * 加载分页页码
  * */
-function loadPage(search, data, pageSize,userId) {
+function loadPage(search, data, pageSize, userId) {
     var next = data.currentPage + 1;
     if (next >= data.totalPages) {
         next = data.totalPages;
@@ -155,8 +157,8 @@ function loadPage(search, data, pageSize,userId) {
         $("#totalCounts").text(data.totalCounts);*/
     //页码展示
     var lis = "";
-    var firstPage = '<li><a href="javascript:load(' + search + ', 1,' + pageSize + ','+userId+')">首页</a></li>';
-    var prePage = '<li><a href="javascript:load(' + search + ',' + (data.currentPage - 1) + ',' + pageSize + ','+userId+')">上一页</a></li>';
+    var firstPage = '<li><a href="javascript:load(' + search + ', 1,' + pageSize + ',' + userId + ')">首页</a></li>';
+    var prePage = '<li><a href="javascript:load(' + search + ',' + (data.currentPage - 1) + ',' + pageSize + ',' + userId + ')">上一页</a></li>';
     lis += firstPage + prePage;
     var begin;
     var end;
@@ -189,12 +191,12 @@ function loadPage(search, data, pageSize,userId) {
             li = '<li class="active"><span>' + i + '<span class="sr-only">(current)</span></span></li>';
         } else {
 
-            li = '<li><a href="javascript:load(' + search + ',' + i + ',' + pageSize + ','+userId+')">' + i + '</a></li>';
+            li = '<li><a href="javascript:load(' + search + ',' + i + ',' + pageSize + ',' + userId + ')">' + i + '</a></li>';
         }
         lis += li;
     }
-    var nextPage = '<li><a href="javascript:load(' + search + ',' + (next) + ',' + pageSize + ','+userId+')">下一页</a></li>';
-    var lastPage = '<li><a href="javascript:load(' + search + ',' + data.totalPages + ',' + pageSize + ','+userId+')">末页</a></li>';
+    var nextPage = '<li><a href="javascript:load(' + search + ',' + (next) + ',' + pageSize + ',' + userId + ')">下一页</a></li>';
+    var lastPage = '<li><a href="javascript:load(' + search + ',' + data.totalPages + ',' + pageSize + ',' + userId + ')">末页</a></li>';
     lis += nextPage + lastPage;
     $("#page").html(lis);
 
@@ -210,4 +212,17 @@ function getParameter(name) {
     var r = location.search.substr(1).match(reg);
     if (r != null) return (r[2]);
     return null;
+}
+
+$(window).scroll(function () {
+    let scroll_len = $(window).scrollTop();
+    if (scroll_len > 120) {
+        $('.top').fadeIn();
+    } else {
+        $('.top').fadeOut();
+    }
+});
+
+function goTop() {
+    $("body,html").animate({scrollTop: 0}, 300);
 }
