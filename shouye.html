@@ -211,12 +211,11 @@
      * @param infoId
      */
     function submitComment(userId, infoId) {
-
         var inputId = "#input" + infoId;
-        var divId = "#comments" + infoId;
+        var divId = "#comment" + infoId;
         var comment = "<p>" + user.name + ":" + $(inputId).val() + "</p>";
         if ($(inputId).val()) {
-            $.post("submitComment", {userId: userId, infoId: infoId, comment: $(inputId).val()}, function (data) {
+            $.post("/user/submitComment", {userId: userId, itemId: infoId, comment: $(inputId).val()}, function (data) {
                 $(divId).append(comment);
                 $(inputId).val("");
             });
@@ -479,14 +478,13 @@
      */
     function loadComment(comments, itemId, userId, userImg) {
         var isLogin = '<div class="row"><div class="col-xs-1"><img src="' + userImg + '" class="userImgSmall"/> </div> ' +
-            '<div class="col-xs-9"><input class="form-control"></div>' +
-            '<div class="col-xs-2"><button class="btn btn-default">评论</button></div> ' +
+            '<div class="col-xs-9"><input class="form-control" id="input' + itemId + '"></div>' +
+            '<div class="col-xs-2"><button class="btn btn-default" onclick="submitComment(' + userId + ',' + itemId + ')">评论</button></div> ' +
             '</div> ';
         if (userId == 0) {
             isLogin = '<div class="row" style="text-align: center">您还未登陆，<a href="./login.html">登陆</a>后可评论</div>';
         }
-        var id = 'comment' + itemId;
-        var div = '<div class="comment ' + id + '">' + isLogin;
+        var div = '<div class="comment ' + itemId + '">' + isLogin;
         div += '<div class="row ">' +
             '<dic class="col-xs-1"></dic>' +
             '<div class="col-xs-10">';
