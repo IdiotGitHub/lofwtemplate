@@ -19,6 +19,7 @@
             max-width: 100%;
             max-height: 100%;
         }
+
         .top {
             display: none;
         }
@@ -90,7 +91,7 @@
             </nav>
         </div>
     </div>
-    <div class="top" ><a href="javascript:void(0)" id="goTop" onclick="goTop()"><span
+    <div class="top"><a href="javascript:void(0)" id="goTop" onclick="goTop()"><span
             class="glyphicon glyphicon-arrow-up totop"></span></a></div>
     <!--<div class="chat">
         <div id="chatBord"></div>
@@ -387,6 +388,7 @@
             } else {
                 faSpan = '<span class="glyphicon glyphicon-star-empty"></span>';
             }
+            //判断是否已经关注，需要处理一下当该用户为当前用户的时候的状态
             if (data[i].isFollowed) {
                 foSpan = "已关注"
             } else {
@@ -403,7 +405,9 @@
                 '   <div class="row" >' +
                 '     <div class="col-lg-1 col-xs-2"><img src="' + data[i].userImg + '"class="userImgBig"onclick="checkUser(' + id + ',' + data[i].userId + ')"/></div>' +
                 '       <div class="col-lg-8 col-xs-7 userNameBar"><div class="userName">' + data[i].userName + ':<br/><span class="itemDatetime">' + data[i].datetime + '</span> </div> </div>' +
-                '       <div class="col-lg-3 col-xs-3 userNameBar"  id="follow"><a href="javascript:void(0)" class="' + data[i].userId + '" onclick="checkFollowedStatus(this,' + data[i].userId + ',' + id + ')">' + foSpan + '</a>' +
+                '       <div class="col-lg-3 col-xs-3 userNameBar"  id="follow">' +
+                '           <a href="javascript:void(0)" class="' + data[i].userId + '" onclick="checkFollowedStatus(this,' + data[i].userId + ',' + id + ')">' + foSpan + '</a>' +
+                '           <a href="javascript:void(0)" class="' + data[i].userId + '" onclick="communicate(' + data[i].userId + ',' + id + ')">私信</a>' +
                 '       </div>' +
                 '   </div>' +
                 '   <div class="row">' +
@@ -414,15 +418,19 @@
                 '       <div class="col-xs-1"></div>' +
                 '   </div>' +
                 '   <div class="row action">' +
-                '      <div class="col-xs-4">' +
+                '      <div class="col-xs-3">' +
                 '          <a href="javascript:void(0)" onclick="checkFavouriteStatus(this,' + data[i].id + ',' + id + ' )">收藏' + faSpan + '</a>' +
                 '          <span>' + data[i].favourite + '</span>' +
                 '      </div>' +
-                '      <div class="col-xs-4">' +
+                '      <div class="col-xs-3">' +
+                '          <a href="javascript:void(0)" onclick="transmit(' + data[i].id + ',' + id + ' )">转发</a>' +
+                '          <span>' + data[i].favourite + '</span>' +
+                '      </div>' +
+                '      <div class="col-xs-3">' +
                 '         <a href="javascript:void(0)" onclick="checkLikeStatus(this,' + data[i].id + ',' + id + ' )">点赞' + likeSpan + '</a>' +
                 '         <span>' + data[i].likes + '</span>' +
                 '      </div>' +
-                '      <div class="col-xs-4"><a href="javascript:void(0)" onclick="comment(' + data[i].id + ',' + id + ')">评论' +
+                '      <div class="col-xs-3"><a href="javascript:void(0)" onclick="comment(' + data[i].id + ',' + id + ')">评论' +
                 '         <span class="glyphicon glyphicon-edit"></span> </a><span>' + data[i].comments + '</span>' +
                 '      </div>' +
                 '   </div>';
@@ -431,6 +439,35 @@
         }
         $("#body").html(div);
         return true;
+    }
+
+    //转发
+    function transmit(itemId, userId) {
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/item/transmit",
+            data: {"itemId": itemId, "userId": userId},
+            xhrFields: {withCredentials: true},
+            success: function (data) {
+                if (data.status == "success") {
+
+                } else {
+                    alert("发生错误,原因为：" + data.data.errorMsg);
+                }
+            },
+            error: function (data) {
+                alert("错误,原因是：" + data.responseText);
+            }
+        });
+    }
+
+    //私信
+    function communicate(sendId, recId) {
+        if (!sendId) {
+            alert("请先登录");
+        } else {
+            location.href = "http://chattingroom.html?sendId=" + sendId + "&recId=" + recId;
+        }
     }
 
     /**
