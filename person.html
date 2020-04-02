@@ -102,7 +102,7 @@
         };
         $(function () {
             user = null;
-            var userId = getParameter("userId");
+            var userId = getParameter("id");
             if (!userId) {
                 alert("你还未登陆，请先登录");
                 location.href = "./login.html";
@@ -429,7 +429,7 @@
                     '   <div class="row action">' +
                     '      <div class="col-xs-4">' +
                     '          <a href="javascript:void(0)" onclick="checkFavouriteStatus(this,' + data[i].id + ',' + id + ' )">收藏' + faSpan + '</a>' +
-                    '          <span>' + data[i].favourites + '</span>' +
+                    '          <span>' + data[i].favourite + '</span>' +
                     '      </div>' +
                     '      <div class="col-xs-4">' +
                     '         <a href="javascript:void(0)" onclick="checkLikeStatus(this,' + data[i].id + ',' + id + ' )">点赞' + likeSpan + '</a>' +
